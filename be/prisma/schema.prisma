@@ -1,0 +1,56 @@
+
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum SessionStatus {
+  pending
+  connected
+  expired
+}
+
+enum TxStatus {
+  pending
+  signed
+  submitted
+  confirmed
+  failed
+}
+
+enum TxType {
+  transfer
+}
+
+model Session {
+  session_id        String   @id
+  wallet_address    String?
+  connection_token  String   @unique
+  token_expiry      DateTime
+  created_at        DateTime @default(now())
+  last_used_at      DateTime @updatedAt
+  status            SessionStatus
+
+  pending_transactions PendingTransaction[]
+}
+
+model PendingTransaction {
+  tx_id                String   @id @default(uuid())
+  session_id           String
+  wallet_address       String
+  recipient_address    String
+  amount               BigInt
+  tx_type              TxType
+  unsigned_transaction Bytes
+  status               TxStatus
+  created_at           DateTime @default(now())
+  expires_at           DateTime
+  signature            String?
+
+  session Session @relation(fields: [session_id], references: [session_id])
+}
