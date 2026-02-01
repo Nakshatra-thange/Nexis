@@ -1,4 +1,4 @@
-import { prisma } from "./database/prisma";
+import { prisma } from "../database/prisma";
 
 async function main() {
   const sessions = await prisma.session.findMany();

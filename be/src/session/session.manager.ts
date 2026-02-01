@@ -29,8 +29,15 @@ export async function createSession(sessionId: string) {
   return session;
 }
 export function buildConnectionUrl(token: string) {
-  return `${process.env.WEBAPP_URL}/connect?token=${token}`;
+  const baseUrl = process.env.FRONTEND_URL;
+
+  if (!baseUrl) {
+    throw new Error("FRONTEND_URL is not set");
+  }
+
+  return `${baseUrl}/connect?token=${token}`;
 }
+  
 
 export async function validateSession(sessionId: string) {
     const session = await prisma.session.findUnique({

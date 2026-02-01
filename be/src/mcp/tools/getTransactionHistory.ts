@@ -12,7 +12,10 @@ import {
  * MCP input schema
  */
 export const getTransactionHistoryInputSchema = z.object({
-  limit: z.number().min(1).max(50).optional(), // default handled in code
+  method: z.literal("get_transaction_history"),
+  params: z.object({
+    limit: z.number().min(1).max(50).optional(),
+  }).optional(),
 });
 
 /**

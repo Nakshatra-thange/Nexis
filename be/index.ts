@@ -1,14 +1,19 @@
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { z } from "zod";
+import app from "./src/api/server";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import {
   getBalanceInputSchema,
   getBalanceHandler,
 } from "./src/mcp/tools/getBalance";
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 function log(message: string) {
   console.log(`[NEXIS MCP] ${new Date().toISOString()} — ${message}`);
 }
+const port = 3001;
+app.listen(PORT, () => {
+  console.log(`API server running on http://localhost:${PORT}`);
+});
 const server = new Server(
   {
     name: "nexis-mcp-server",
