@@ -4,6 +4,8 @@ import { prisma } from "../../database/prisma";
 
 export const connectRouter = Router();
 
+
+
 const bodySchema = z.object({
   token: z.string(),
   walletAddress: z.string(),

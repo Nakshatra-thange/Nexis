@@ -33,6 +33,7 @@ model Session {
   connection_token  String   @unique
   token_expiry      DateTime
   created_at        DateTime @default(now())
+
   last_used_at      DateTime @updatedAt
   status            SessionStatus
 

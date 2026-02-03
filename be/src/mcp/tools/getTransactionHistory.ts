@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
-
+import { getActiveSession } from "../../session/getActiveSession";
 import { getSolanaConnection } from "../../solana/connection";
 import {
   createSession,
@@ -29,23 +29,22 @@ export async function getTransactionHistoryHandler({
   limit?: number;
 }) {
   // 1. Validate session
-  const validation = await validateSession(sessionId);
 
-  if (!validation.valid) {
-    const session = await createSession(sessionId);
-    const url = buildConnectionUrl(session.connection_token);
 
-    return {
-      content: [
-        {
-          type: "text",
-          text: `Please connect your wallet to continue:\n${url}`,
-        },
-      ],
-    };
-  }
+const session = await getActiveSession();
 
-  const session = validation.session!;
+if (!session) {
+  const newSession = await createSession(sessionId);
+  const url = buildConnectionUrl(newSession.connection_token);
+
+  return {
+    content: [{ type: "text", text: `Please connect your wallet:\n${url}` }],
+  };
+}
+
+
+  
+  
 
   // 2. Wallet not connected
   if (!session.wallet_address) {

@@ -15,7 +15,7 @@ app.use(transactionStatusRoute);
 
 app.use(
   cors({
-    origin: process.env.WEBAPP_URL,
+    origin: "http://localhost:3000",
     credentials: true,
   })
 );
@@ -30,7 +30,6 @@ app.use(
 );
 
 app.use(apiRateLimit(50, 60 * 60 * 1000));
-
 
 app.use("/api/connect", connectRouter);
 app.use("/api/session", sessionRouter);

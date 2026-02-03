@@ -3,6 +3,7 @@ import { AppError } from "./src/errors/AppError";
 import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { logger } from "./src/logger";
+import { getTransactionHistoryHandler } from "./src/mcp/tools/getTransactionHistory";
 
 import {
   ListToolsRequestSchema,
@@ -87,6 +88,18 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
           required: ["transaction_id"],
         },
       },
+      {
+        name: "get_transaction_history",
+        description:
+          "Show recent confirmed transactions for the connected Solana wallet.",
+        inputSchema: {
+          type: "object",
+          properties: {
+            limit: { type: "number" },
+          },
+        },
+      },
+      
       
     ],
   };
@@ -134,12 +147,23 @@ server.setRequestHandler(CallToolRequestSchema, async (request, extra) => {
       };
 
       return await transferSolHandler({
-        sessionId,
+        
         recipient_address: args.recipient_address,
         amount: args.amount,
         memo: args.memo,
       });
-    
+    }
+
+    /* ---------- get_transaction_history ---------- */
+    if (toolName === "get_transaction_history") {
+      const args = (request.params?.arguments ?? {}) as {
+        limit?: number;
+      };
+
+      return await getTransactionHistoryHandler({
+        sessionId: sessionId!,
+        limit: args.limit,
+      });
     }
 
     if (toolName === "check_transaction") {

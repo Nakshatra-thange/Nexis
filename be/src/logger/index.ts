@@ -1,13 +1,19 @@
-import pino from "pino";
-import { createStream } from "pino-rotating-file-stream";
+
+import pino from 'pino';
+//import { createStream } from 'pino-seq'
+//import { createStream } from "pino-rotating-file-stream";
+import { createStream } from "rotating-file-stream";
 import path from "path";
+import fs from "fs";
 
-const logDir = path.join(process.cwd(), "logs");
-
-const stream = createStream({
+const logDir = path.resolve(__dirname, "../../../logs");
+if (!fs.existsSync(logDir)) {
+  fs.mkdirSync(logDir, { recursive: true });
+}
+const stream = createStream("app.log", {
   path: logDir,
-  interval: "1d",      // rotate daily
-  size: "10M",         // rotate if >10MB
+  interval: "1d", // rotate daily
+  size: "10M", // rotate if >10MB
   compress: "gzip",
 });
 

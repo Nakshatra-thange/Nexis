@@ -1,7 +1,8 @@
 import {
-    Connection,
-    clusterApiUrl
-  } from "@solana/web3.js";
+  Connection,
+  clusterApiUrl,
+  type Blockhash,
+} from "@solana/web3.js";
 
 
   type BlockhashWithExpiryBlockHeight = {

@@ -1,14 +1,27 @@
 import { prisma } from "../../database/prisma";
 import { getSolanaConnection } from "../../solana/connection";
-
+import { getActiveSession } from "../../session/getActiveSession";
 export async function checkTransactionHandler({
   transaction_id,
 }: {
   transaction_id: string;
 }) {
-  const tx = await prisma.pendingTransaction.findUnique({
-    where: { tx_id: transaction_id },
-  });
+
+  const session = await getActiveSession();
+
+if (!session) {
+  return {
+    content: [{ type: "text", text: "No active wallet session." }],
+  };
+}
+
+const tx = await prisma.pendingTransaction.findFirst({
+  where: {
+    tx_id: transaction_id,
+    session_id: session.session_id,
+  },
+});
+  
 
   if (!tx) {
     return {
@@ -36,7 +49,12 @@ export async function checkTransactionHandler({
         content: [
           {
             type: "text",
-            text: `✅ Transaction confirmed!\n\nSignature:\n${tx.signature}`,
+            text: `✅ Transaction created successfully!
+
+Next step:
+1️⃣ Open the link below  
+2️⃣ Review the transaction  
+3️⃣ Approve & sign in your wallet  :\n${tx.signature}`,
           },
         ],
       };
